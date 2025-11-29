@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humotica - The Human Meaning Layer</title>
+    <meta name="description" content="Humotica: What if computers could understand WHY? The philosophy behind context-driven, intent-powered computing.">
+    <meta name="author" content="Jasper van de Meent">
+    <meta property="og:title" content="Humotica - The Human Meaning Layer">
+    <meta property="og:description" content="Context-driven, intent-powered computing. The philosophy that birthed BETTI and JIS.">
+    <meta property="og:url" content="https://humotica.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6A5BFF;
+            --accent: #10B981;
+            --bg-dark: #0A0E1A;
+            --bg-mid: #0F1629;
+            --text: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text); line-height: 1.8; }
+
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(10, 14, 26, 0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 1rem 2rem;
+        }
+        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; }
+        .nav-links a:hover { color: var(--text); }
+
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: radial-gradient(ellipse at 50% 0%, rgba(106, 91, 255, 0.1) 0%, transparent 60%);
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero .subtitle { color: var(--accent); font-size: 1.2rem; margin-bottom: 1rem; }
+        .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 550px; margin: 0 auto; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+
+        .section { padding: 3rem 0; }
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .content-box {
+            background: var(--bg-mid);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--primary);
+        }
+        .content-box.good { border-left-color: var(--accent); }
+
+        .content-box h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        .content-box p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .content-box p:last-child { margin-bottom: 0; }
+
+        .philosophy-quote {
+            text-align: center;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(106, 91, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(106, 91, 255, 0.05);
+        }
+        .philosophy-quote .dutch {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+        .philosophy-quote .translation {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        .philosophy-quote .author {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .pillars {
+            display: grid;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .pillar {
+            display: flex;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--bg-mid);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+        .pillar-icon { font-size: 1.5rem; }
+        .pillar h4 { color: var(--primary); margin-bottom: 0.25rem; }
+        .pillar p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
+
+        .code-example {
+            background: #0D1117;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Monaco', monospace;
+            font-size: 0.85rem;
+            color: #A5B4FC;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .link-card {
+            background: var(--bg-mid);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: border-color 0.3s;
+        }
+        .link-card:hover { border-color: var(--primary); }
+        .link-card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .link-card h4 { color: var(--text); margin-bottom: 0.25rem; }
+        .link-card p { color: var(--text-muted); font-size: 0.85rem; margin: 0; }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            margin-top: 2rem;
+        }
+        footer a { color: var(--primary); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .pillar { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">Humotica</a>
+            <div class="nav-links">
+                <a href="https://humotica.com">Humotica</a>
+                <a href="https://jis.humotica.com">JIS</a>
+                <a href="https://betti.humotica.com">BETTI</a>
+                <a href="https://josl.humotica.com">License</a>
+                <a href="https://github.com/jaspertvdm/JTel-identity-standard">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Humotica</h1>
+        <div class="subtitle">The Human Meaning Layer</div>
+        <p>What if computers could understand <strong>why</strong> you want something, not just <strong>what</strong> you're asking for?</p>
+    </section>
+
+    <div class="container">
+        <section class="section">
+            <h2 class="section-title">The Philosophy</h2>
+
+            <div class="philosophy-quote">
+                <div class="dutch">"We moeten menselijk met computers kunnen omgaan"</div>
+                <div class="translation">"We must be able to interact humanly with computers"</div>
+                <div class="author">— Jasper van de Meent</div>
+            </div>
+
+            <p style="color: var(--text-muted);">
+                Humotica is the human-readable context that gives computing a soul. It's the <strong>why</strong> behind every intent, the <strong>context</strong> that enables empathy, and the <strong>explanation</strong> that makes systems trustworthy.
+            </p>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">The Four Pillars</h2>
+
+            <div class="pillars">
+                <div class="pillar">
+                    <span class="pillar-icon">👁️</span>
+                    <div>
+                        <h4>Sense</h4>
+                        <p>What triggered this intent? The sensory input.</p>
+                    </div>
+                </div>
+                <div class="pillar">
+                    <span class="pillar-icon">🌍</span>
+                    <div>
+                        <h4>Context</h4>
+                        <p>What's the current situation? Background and circumstances.</p>
+                    </div>
+                </div>
+                <div class="pillar">
+                    <span class="pillar-icon">🎯</span>
+                    <div>
+                        <h4>Intent</h4>
+                        <p>What does the user want to achieve?</p>
+                    </div>
+                </div>
+                <div class="pillar">
+                    <span class="pillar-icon">💡</span>
+                    <div>
+                        <h4>Explanation</h4>
+                        <p>The detailed reasoning — the "why" behind everything.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Example</h2>
+
+            <div class="code-example">humotica = {
+    "sense": "User clicked 'Transfer' at 14:30",
+    "context": "House purchase down payment",
+    "intent": "Transfer €50,000 to seller's account",
+    "explanation": """
+        Buying house at Hoofdstraat 42, Amsterdam.
+        Mortgage approved: ING Bank (2025-11-20).
+        Notary: Mr. Jan de Vries (verified).
+    """
+}
+
+# Result: APPROVED instantly
+# System understands the WHY, not just the WHAT</div>
+
+            <div class="content-box good">
+                <h3>Why This Matters</h3>
+                <p>Without Humotica, this €50,000 transfer looks suspicious. With Humotica, the system understands it's a legitimate house purchase with verified parties.</p>
+                <p>Malware cannot provide valid Humotica context. There's no legitimate explanation for "sql_injection" or "crypto_mining".</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">The Bigger Picture</h2>
+
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                Humotica is the soul. It became the foundation for:
+            </p>
+
+            <div class="links-grid">
+                <a href="https://betti.humotica.com" class="link-card">
+                    <div class="link-card-icon">📦</div>
+                    <h4>BETTI</h4>
+                    <p>14 physics laws for computing</p>
+                </a>
+                <a href="https://jis.humotica.com" class="link-card">
+                    <div class="link-card-icon">🔐</div>
+                    <h4>JIS</h4>
+                    <p>Semantic security protocol</p>
+                </a>
+                <a href="https://josl.humotica.com" class="link-card">
+                    <div class="link-card-icon">📜</div>
+                    <h4>JOSL</h4>
+                    <p>Open standard license</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Benefits</h2>
+
+            <div class="content-box">
+                <h3>For Users</h3>
+                <p>Systems that understand frustration, adjust for stress, and build real relationships. "The system gets me."</p>
+            </div>
+
+            <div class="content-box">
+                <h3>For Developers</h3>
+                <p>Clear audit trails. "Why did the system do X?" — read the Humotica. Human-understandable reasoning in every transaction.</p>
+            </div>
+
+            <div class="content-box">
+                <h3>For Security</h3>
+                <p>Malware has no context. Humotica required = attacks blocked proactively, not reactively.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>
+            <strong>Humotica</strong> — The Human Meaning Layer<br>
+            Created by <strong>Jasper van de Meent</strong><br><br>
+            <a href="https://zenodo.org/records/17759713">DOI: 10.5281/zenodo.17759713</a><br><br>
+            <a href="https://jis.humotica.com">JIS Protocol</a> •
+            <a href="https://betti.humotica.com">BETTI</a> •
+            <a href="https://josl.humotica.com">JOSL License</a> •
+            <a href="mailto:jtmeent@gmail.com">Contact</a>
+        </p>
+    </footer>
+</body>
+</html>

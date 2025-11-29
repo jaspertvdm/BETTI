@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIBET-BETTI Sector Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .sector-content {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .sector-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sector-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .sector-icon {
+            font-size: 3rem;
+        }
+
+        .sector-info h2 {
+            font-size: 1.75rem;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .sector-info p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .use-cases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .use-case:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .use-case h3 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        .use-case p {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .intent-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .complexity-level {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .complexity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+        }
+
+        .complexity-dot.active {
+            background: #667eea;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .demo-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .demo-section h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .demo-output {
+            background: #1e293b;
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 TIBET-BETTI Sector Demo</h1>
+            <p>Universal Transaction & Trust Management for Every Industry</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchSector('zorg')">🏥 Zorg</div>
+            <div class="tab" onclick="switchSector('overheid')">🏛️ Overheid</div>
+            <div class="tab" onclick="switchSector('onderwijs')">🎓 Onderwijs</div>
+            <div class="tab" onclick="switchSector('ai')">🤖 AI Bedrijven</div>
+            <div class="tab" onclick="switchSector('telecom')">📞 Telecom</div>
+        </div>
+
+        <!-- ZORG -->
+        <div id="sector-zorg" class="sector-content active">
+            <div class="sector-header">
+                <div class="sector-icon">🏥</div>
+                <div class="sector-info">
+                    <h2>Zorg - Privacy & Compliance</h2>
+                    <p>HIPAA/AVG compliant communicatie met volledige audit trail en privacy bescherming</p>
+                </div>
+            </div>
+
+            <div class="use-cases">
+                <div class="use-case" onclick="runDemo('zorg', 'consultation')">
+                    <span class="intent-badge">medical_consultation</span>
+                    <h3>Huisarts → Specialist</h3>
+                    <p>Urgent advies over patiënt met hartklachten. Privacy-preserving context sharing.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('zorg', 'emergency')">
+                    <span class="intent-badge">emergency_medical</span>
+                    <h3>Noodoproep Ambulance</h3>
+                    <p>112 oproep met locatie en patiënt info. Max prioriteit, geen queue.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('zorg', 'prescription')">
+                    <span class="intent-badge">prescription_verification</span>
+                    <h3>Apotheek → Huisarts</h3>
+                    <p>Verificatie recept voordat medicatie wordt afgegeven.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="zorg-calls">0</div>
+                    <div class="stat-label">Calls Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Privacy OK</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">AVG</div>
+                    <div class="stat-label">Compliant</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2.3s</div>
+                    <div class="stat-label">Avg Response</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>Live Demo Output</h3>
+                <div id="demo-output-zorg" class="demo-output">Klik op een use case om te testen...</div>
+            </div>
+        </div>
+
+        <!-- OVERHEID -->
+        <div id="sector-overheid" class="sector-content">
+            <div class="sector-header">
+                <div class="sector-icon">🏛️</div>
+                <div class="sector-info">
+                    <h2>Overheid - Transparantie & Accountability</h2>
+                    <p>Eerlijke resource allocatie, volledige transparantie, geen voorkeursbehandeling</p>
+                </div>
+            </div>
+
+            <div class="use-cases">
+                <div class="use-case" onclick="runDemo('overheid', 'citizen')">
+                    <span class="intent-badge">citizen_service_request</span>
+                    <h3>Burger → Gemeente</h3>
+                    <p>Vraag over status bouwvergunning. Fair queue management via BETTI 9 Laws.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('overheid', 'official')">
+                    <span class="intent-badge">inter_department_coordination</span>
+                    <h3>Afdeling → Afdeling</h3>
+                    <p>Cross-departement samenwerking met volledige audit trail.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('overheid', 'transparency')">
+                    <span class="intent-badge">public_records_request</span>
+                    <h3>WOB Verzoek</h3>
+                    <p>Wet Openbaarheid Bestuur - verzoek met complete logging.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="overheid-calls">0</div>
+                    <div class="stat-label">Calls Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Fair Queue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Audit Trail</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4.1s</div>
+                    <div class="stat-label">Avg Wait</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>Live Demo Output</h3>
+                <div id="demo-output-overheid" class="demo-output">Klik op een use case om te testen...</div>
+            </div>
+        </div>
+
+        <!-- ONDERWIJS -->
+        <div id="sector-onderwijs" class="sector-content">
+            <div class="sector-header">
+                <div class="sector-icon">🎓</div>
+                <div class="sector-info">
+                    <h2>Onderwijs - Veiligheid & Monitoring</h2>
+                    <p>Noodprotocollen, ouder-leraar communicatie, veilige leeromgeving</p>
+                </div>
+            </div>
+
+            <div class="use-cases">
+                <div class="use-case" onclick="runDemo('onderwijs', 'emergency')">
+                    <span class="intent-badge">emergency_school_lockdown</span>
+                    <h3>Noodknop Lockdown</h3>
+                    <p>Instant multi-dial naar ouders + politie + schoolbestuur.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('onderwijs', 'parent')">
+                    <span class="intent-badge">parent_teacher_consultation</span>
+                    <h3>Ouder → Leraar</h3>
+                    <p>Gepland gesprek over voortgang leerling.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('onderwijs', 'attendance')">
+                    <span class="intent-badge">absence_notification</span>
+                    <h3>Verzuimmelding</h3>
+                    <p>Automatische notificatie aan ouders bij ongeoorloofd verzuim.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="onderwijs-calls">0</div>
+                    <div class="stat-label">Calls Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0.8s</div>
+                    <div class="stat-label">Emergency Response</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Safe</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">432</div>
+                    <div class="stat-label">Students</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>Live Demo Output</h3>
+                <div id="demo-output-onderwijs" class="demo-output">Klik op een use case om te testen...</div>
+            </div>
+        </div>
+
+        <!-- AI BEDRIJVEN -->
+        <div id="sector-ai" class="sector-content">
+            <div class="sector-header">
+                <div class="sector-icon">🤖</div>
+                <div class="sector-info">
+                    <h2>AI Bedrijven - Resource Management</h2>
+                    <p>GPU cluster management, energy budgets, cost optimization via BETTI laws</p>
+                </div>
+            </div>
+
+            <div class="use-cases">
+                <div class="use-case" onclick="runDemo('ai', 'gpu')">
+                    <span class="intent-badge">gpu_cluster_approval_request</span>
+                    <h3>GPU Training Approval</h3>
+                    <p>Llama-405B training run - 450 kWh energy check via Thermodynamics Law.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('ai', 'inference')">
+                    <span class="intent-badge">inference_scaling_request</span>
+                    <h3>Auto-scaling Alert</h3>
+                    <p>Load spike detected - request for additional inference nodes.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('ai', 'cost')">
+                    <span class="intent-badge">cost_threshold_alert</span>
+                    <h3>Budget Threshold</h3>
+                    <p>Monthly budget 80% gebruikt - approval needed voor nieuwe jobs.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="ai-calls">0</div>
+                    <div class="stat-label">Calls Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1250 kWh</div>
+                    <div class="stat-label">Energy Budget</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">€4.2k</div>
+                    <div class="stat-label">Cost Saved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">64 GPUs</div>
+                    <div class="stat-label">Managed</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>Live Demo Output</h3>
+                <div id="demo-output-ai" class="demo-output">Klik op een use case om te testen...</div>
+            </div>
+        </div>
+
+        <!-- TELECOM -->
+        <div id="sector-telecom" class="sector-content">
+            <div class="sector-header">
+                <div class="sector-icon">📞</div>
+                <div class="sector-info">
+                    <h2>Telecom - Multi-Protocol & Long-Running</h2>
+                    <p>SIP + MQTT + Matrix, robotica monitoring, IoT telemetry over uren</p>
+                </div>
+            </div>
+
+            <div class="use-cases">
+                <div class="use-case" onclick="runDemo('telecom', 'robot')">
+                    <span class="intent-badge">robot_long_running_monitoring</span>
+                    <h3>Warehouse Robot Fleet</h3>
+                    <p>8-uur telemetry sessie voor 3 robots. SIP + MQTT + Matrix parallel.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('telecom', 'iot')">
+                    <span class="intent-badge">iot_sensor_stream</span>
+                    <h3>IoT Sensor Network</h3>
+                    <p>Continues data stream van 50 sensoren via SIP voice channel.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+
+                <div class="use-case" onclick="runDemo('telecom', 'sla')">
+                    <span class="intent-badge">business_priority_call</span>
+                    <h3>SLA Priority Call</h3>
+                    <p>Enterprise klant met platinum SLA - priority routing.</p>
+                    <div class="complexity-level">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;">Test →</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="telecom-calls">0</div>
+                    <div class="stat-label">Calls Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8.4 hrs</div>
+                    <div class="stat-label">Avg Duration</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Protocols</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">99.98%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>Live Demo Output</h3>
+                <div id="demo-output-telecom" class="demo-output">Klik op een use case om te testen...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchSector(sector) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.sector-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`sector-${sector}`).classList.add('active');
+        }
+
+        async function runDemo(sector, usecase) {
+            const outputDiv = document.getElementById(`demo-output-${sector}`);
+            outputDiv.textContent = 'Initiating TIBET call transaction...\n';
+
+            const demos = {
+                zorg: {
+                    consultation: {
+                        intent: 'medical_consultation',
+                        context: {
+                            patient_id_encrypted: 'SHA256_abc123...def',
+                            urgency: 'high',
+                            specialization: 'cardiology'
+                        },
+                        from_extension: '1100',
+                        to_contact_name: 'Cardiologie',
+                        humotica_context: 'Urgent advies nodig voor patiënt met hartklachten'
+                    },
+                    emergency: {
+                        intent: 'emergency_medical',
+                        context: {
+                            location: 'Hoofdstraat 42, Amsterdam',
+                            emergency_type: '112',
+                            patient_conscious: false
+                        },
+                        from_extension: 'AMBULANCE_DISPATCH',
+                        to_number: '+31612000112',
+                        humotica_context: 'NOODOPROEP - Bewusteloze patiënt'
+                    },
+                    prescription: {
+                        intent: 'prescription_verification',
+                        context: {
+                            prescription_id: 'RX-2025-1234',
+                            medication: 'Metoprolol 50mg',
+                            pharmacy_id: 'APO-456'
+                        },
+                        from_extension: '1150',
+                        to_contact_name: 'Huisarts',
+                        humotica_context: 'Verificatie recept voordat afgeven medicatie'
+                    }
+                },
+                overheid: {
+                    citizen: {
+                        intent: 'citizen_service_request',
+                        context: {
+                            department: 'vergunningen',
+                            case_number: 'VG-2025-1234',
+                            citizen_authenticated: true
+                        },
+                        from_user_id: 'BSN_HASH_123',
+                        to_contact_name: 'Vergunningen',
+                        humotica_context: 'Vraag over status bouwvergunning'
+                    },
+                    official: {
+                        intent: 'inter_department_coordination',
+                        context: {
+                            from_dept: 'Ruimtelijke Ordening',
+                            to_dept: 'Milieu',
+                            case_shared: true
+                        },
+                        from_extension: '2100',
+                        to_contact_name: 'Milieu Dept',
+                        humotica_context: 'Overleg milieuvergunning bouwproject'
+                    },
+                    transparency: {
+                        intent: 'public_records_request',
+                        context: {
+                            request_type: 'WOB',
+                            subject: 'Besluitvorming stadspark',
+                            citizen_verified: true
+                        },
+                        from_user_id: 'CITIZEN_456',
+                        to_contact_name: 'WOB Bureau',
+                        humotica_context: 'WOB verzoek informatie stadspark besluit'
+                    }
+                },
+                onderwijs: {
+                    emergency: {
+                        intent: 'emergency_school_lockdown',
+                        context: {
+                            location: 'Hoofdgebouw lokaal 204',
+                            incident_type: 'lockdown',
+                            students_affected: 28
+                        },
+                        from_extension: 'PANIC_BUTTON_01',
+                        to_contact_name: 'Noodcontact',
+                        humotica_context: 'NOODOPROEP - Lockdown geactiveerd'
+                    },
+                    parent: {
+                        intent: 'parent_teacher_consultation',
+                        context: {
+                            student_id: 'ST-2025-789',
+                            teacher: 'Mevr. De Jong',
+                            scheduled: true
+                        },
+                        from_extension: '3100',
+                        to_number: '+31612345678',
+                        humotica_context: 'Gepland oudergesprek over voortgang wiskunde'
+                    },
+                    attendance: {
+                        intent: 'absence_notification',
+                        context: {
+                            student_id: 'ST-2025-456',
+                            absent_date: '2025-11-28',
+                            reason: 'onbekend'
+                        },
+                        from_extension: 'ATTENDANCE_SYSTEM',
+                        to_number: '+31687654321',
+                        humotica_context: 'Automatische verzuimmelding - kind niet op school'
+                    }
+                },
+                ai: {
+                    gpu: {
+                        intent: 'gpu_cluster_approval_request',
+                        context: {
+                            estimated_kwh: 450,
+                            model: 'llama-405b',
+                            priority: 'batch',
+                            cost_estimate: 1200
+                        },
+                        from_extension: 'CLUSTER_NODE_42',
+                        to_contact_name: 'ML Ops',
+                        humotica_context: 'Training run needs approval - high power consumption'
+                    },
+                    inference: {
+                        intent: 'inference_scaling_request',
+                        context: {
+                            current_load: 850,
+                            threshold: 700,
+                            spike_percentage: 121,
+                            estimated_nodes_needed: 4
+                        },
+                        from_extension: 'AUTOSCALER',
+                        to_contact_name: 'DevOps',
+                        humotica_context: 'Load spike detected - scaling approval needed'
+                    },
+                    cost: {
+                        intent: 'cost_threshold_alert',
+                        context: {
+                            budget_monthly: 10000,
+                            spent: 8000,
+                            percentage: 80,
+                            days_remaining: 8
+                        },
+                        from_extension: 'BILLING_MONITOR',
+                        to_contact_name: 'Finance',
+                        humotica_context: 'Monthly budget 80% gebruikt - approval voor nieuwe jobs?'
+                    }
+                },
+                telecom: {
+                    robot: {
+                        intent: 'robot_long_running_monitoring',
+                        context: {
+                            robot_fleet: ['R01', 'R02', 'R03'],
+                            protocol_mix: ['SIP', 'MQTT', 'Matrix'],
+                            expected_duration_hours: 8,
+                            data_rate_mbps: 0.5
+                        },
+                        from_extension: 'WAREHOUSE_MONITOR',
+                        to_number: '+31887654321',
+                        humotica_context: '8-hour warehouse robot telemetry session'
+                    },
+                    iot: {
+                        intent: 'iot_sensor_stream',
+                        context: {
+                            sensor_count: 50,
+                            data_type: 'temperature_humidity',
+                            interval_seconds: 30,
+                            expected_duration_hours: 24
+                        },
+                        from_extension: 'IOT_GATEWAY',
+                        to_number: '+31201234567',
+                        humotica_context: 'Continuous sensor data stream 50 devices'
+                    },
+                    sla: {
+                        intent: 'business_priority_call',
+                        context: {
+                            customer_tier: 'platinum',
+                            sla_response_time_seconds: 15,
+                            account_id: 'ENT-12345'
+                        },
+                        from_extension: '4100',
+                        to_contact_name: 'Enterprise',
+                        humotica_context: 'Priority support call - Platinum SLA customer'
+                    }
+                }
+            };
+
+            const payload = demos[sector][usecase];
+
+            try {
+                const response = await fetch('/tibet/call/initiate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                outputDiv.textContent += '\n✅ TIBET Call Transaction Successful!\n\n';
+                outputDiv.textContent += `TIBET Token: ${result.tibet_token}\n`;
+                outputDiv.textContent += `Intent: ${result.intent}\n`;
+                outputDiv.textContent += `To: ${result.to_number}\n`;
+                outputDiv.textContent += `State: ${result.state}\n\n`;
+
+                outputDiv.textContent += '🛡️ BETTI Validation:\n';
+                outputDiv.textContent += `  SNAFT Approved: ${result.snaft_approved ? '✓' : '✗'}\n`;
+                outputDiv.textContent += `  BALANS Approved: ${result.balans_approved ? '✓' : '✗'}\n`;
+                outputDiv.textContent += `  BALANS Score: ${result.balans_score}\n\n`;
+
+                outputDiv.textContent += '⚡ Resources Allocated:\n';
+                outputDiv.textContent += `  Power: ${result.resources_allocated.power} Wh\n`;
+                outputDiv.textContent += `  Data: ${result.resources_allocated.data} MB\n`;
+                outputDiv.textContent += `  Memory: ${result.resources_allocated.memory} KB\n`;
+                outputDiv.textContent += `  Queue: ${result.resources_allocated.queue} slot\n\n`;
+
+                if (result.humotica_context) {
+                    outputDiv.textContent += `💬 Human Context:\n  "${result.humotica_context}"\n`;
+                }
+
+                // Update call counter
+                const counterEl = document.getElementById(`${sector}-calls`);
+                if (counterEl) {
+                    counterEl.textContent = parseInt(counterEl.textContent) + 1;
+                }
+
+            } catch (error) {
+                outputDiv.textContent += `\n❌ Error: ${error.message}\n`;
+            }
+        }
+    </script>
+</body>
+</html>

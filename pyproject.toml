@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "betti"
+version = "2.0.0"
+description = "BETTI - Base Event Token Time Intent: Physics-based intent coordination with Humotica context"
+readme = "README.md"
+license = {text = "JOSL"}
+authors = [
+    {name = "Jasper van de Meent", email = "jasper@humotica.com"}
+]
+keywords = [
+    "intent", "coordination", "trust", "identity", "semantic-security",
+    "betti", "tibet", "jis", "humotica", "iot", "smart-home"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Security",
+    "Topic :: Internet",
+    "Topic :: Home Automation",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "httpx>=0.24.0",
+    "websockets>=11.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "black",
+    "ruff",
+]
+server = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.22.0",
+    "redis>=4.5.0",
+    "asyncpg>=0.27.0",
+]
+
+[project.urls]
+Homepage = "https://betti.humotica.com"
+Documentation = "https://github.com/jaspertvdm/betti"
+Repository = "https://github.com/jaspertvdm/betti"
+Issues = "https://github.com/jaspertvdm/betti/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+betti = ["py.typed"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311', 'py312']
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "N", "W"]

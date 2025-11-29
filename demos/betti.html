@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BETTI Paper v2.0 - Physics-Based Computing | JIS</title>
+    <meta name="description" content="BETTI: First computing system using 14 natural physics laws for resource allocation. Full academic paper by Jasper van de Meent.">
+    <meta name="author" content="Jasper van de Meent">
+    <meta property="og:title" content="BETTI: Physics-Based Economic Transaction Model">
+    <meta property="og:description" content="First computing system applying Kepler's law, Einstein's E=mc², Newton's laws to resource allocation">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6A5BFF; --accent: #10B981; --warn: #F59E0B; --bg-dark: #0A0E1A; --bg-mid: #0F1629; --text: #F8FAFC; --text-muted: #94A3B8; --card: rgba(255,255,255,0.05); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text); min-height: 100vh; line-height: 1.8; }
+
+        /* Navigation */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10, 14, 26, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem 2rem; }
+        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; }
+        .nav-links a:hover { color: var(--text); }
+
+        /* TOC Sidebar */
+        .layout { display: grid; grid-template-columns: 280px 1fr; max-width: 1600px; margin: 0 auto; padding-top: 5rem; }
+        .toc { position: sticky; top: 5rem; height: calc(100vh - 6rem); overflow-y: auto; padding: 2rem 1.5rem; border-right: 1px solid rgba(255,255,255,0.1); }
+        .toc h3 { color: #94A3B8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .toc a { display: block; color: #64748B; text-decoration: none; font-size: 0.9rem; padding: 0.4rem 0; border-left: 2px solid transparent; padding-left: 1rem; transition: all 0.2s; }
+        .toc a:hover { color: #F1F5F9; border-left-color: #6A5BFF; }
+        .toc a.active { color: #6A5BFF; border-left-color: #6A5BFF; }
+
+        /* Main Content */
+        .content { padding: 3rem 4rem; max-width: 900px; }
+
+        /* Paper Header */
+        .paper-header { text-align: center; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 3rem; }
+        .paper-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; padding: 8px 16px; border-radius: 24px; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .paper-badge a { color: #10B981; text-decoration: none; }
+        .paper-title { font-size: 2rem; line-height: 1.3; margin-bottom: 1rem; }
+        .paper-subtitle { color: #94A3B8; font-size: 1.1rem; margin-bottom: 2rem; }
+        .paper-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; font-size: 0.9rem; color: #64748B; margin-bottom: 2rem; }
+        .paper-meta strong { color: #F1F5F9; }
+        .paper-keywords { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+        .keyword { background: rgba(99, 102, 241, 0.2); color: #A5B4FC; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; }
+        .download-btns { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: linear-gradient(135deg, #6A5BFF, #4F46E5); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4); }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+
+        /* Section Styles */
+        h2 { font-size: 1.6rem; margin: 3rem 0 1.5rem; color: #F1F5F9; padding-bottom: 0.75rem; border-bottom: 2px solid #6A5BFF; display: flex; align-items: center; gap: 0.75rem; }
+        h2 .section-num { color: #6A5BFF; font-weight: 400; }
+        h3 { font-size: 1.25rem; margin: 2rem 0 1rem; color: #E2E8F0; }
+        h4 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; color: #CBD5E1; }
+        p { color: #CBD5E1; margin-bottom: 1rem; }
+
+        /* Abstract */
+        .abstract { background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.1)); border-left: 4px solid #6A5BFF; padding: 2rem; border-radius: 0 12px 12px 0; margin: 2rem 0; }
+        .abstract h3 { color: #6A5BFF; margin-top: 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .abstract p { color: #E2E8F0; margin: 0; font-size: 1.05rem; }
+        .abstract .highlight { color: #10B981; font-weight: 600; }
+
+        /* Law Cards */
+        .law-card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; transition: all 0.3s; }
+        .law-card:hover { border-color: rgba(99, 102, 241, 0.5); transform: translateX(4px); }
+        .law-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .law-icon { font-size: 2rem; }
+        .law-title { font-size: 1.2rem; color: #F1F5F9; }
+        .law-num { color: #6A5BFF; font-weight: 400; }
+        .formula { font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.4); padding: 1rem 1.5rem; border-radius: 8px; margin: 1rem 0; color: #10B981; font-size: 1.1rem; text-align: center; border-left: 3px solid #10B981; }
+        .law-card p { font-size: 0.95rem; color: #94A3B8; margin: 0.5rem 0; }
+        .law-card .application { color: #CBD5E1; }
+        .law-card .example { background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 6px; margin-top: 1rem; font-size: 0.9rem; }
+        .law-card .novel { display: inline-block; background: rgba(245, 158, 11, 0.2); color: #F59E0B; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-top: 0.5rem; }
+
+        /* Code Blocks */
+        .code-block { background: #1a1f2e; border-radius: 8px; padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; overflow-x: auto; color: #E2E8F0; margin: 1.5rem 0; border: 1px solid rgba(255,255,255,0.1); }
+        .code-block .comment { color: #64748B; }
+        .code-block .keyword { color: #C792EA; }
+        .code-block .string { color: #C3E88D; }
+        .code-block .function { color: #82AAFF; }
+
+        /* Architecture Diagram */
+        .architecture { background: var(--card); border-radius: 12px; padding: 2rem; margin: 2rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.1); }
+        .arch-layer { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); padding: 0.75rem 1.5rem; margin: 0.5rem 0; border-radius: 6px; text-align: center; }
+        .arch-arrow { text-align: center; color: #64748B; font-size: 1.2rem; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { color: #F1F5F9; font-weight: 600; background: rgba(255,255,255,0.05); }
+        td { color: #94A3B8; }
+        .good { color: #10B981; font-weight: 600; }
+        .bad { color: #EF4444; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 2rem 0; }
+        .stat-card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; text-align: center; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #6A5BFF; }
+        .stat-label { color: #94A3B8; font-size: 0.85rem; margin-top: 0.5rem; }
+
+        /* Comparison Box */
+        .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
+        .compare-box { background: var(--card); border-radius: 12px; padding: 1.5rem; }
+        .compare-box.traditional { border-left: 4px solid #EF4444; }
+        .compare-box.betti { border-left: 4px solid #10B981; }
+        .compare-box h4 { margin-top: 0; }
+
+        /* Citation */
+        .citation { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+        .citation h4 { color: #10B981; margin-top: 0; }
+        .citation pre { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #CBD5E1; white-space: pre-wrap; margin: 0; }
+
+        /* GPU Section Special */
+        .gpu-section { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1)); border-radius: 16px; padding: 2rem; margin: 2rem 0; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .gpu-section h3 { color: #10B981; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 3rem 2rem; color: #64748B; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 4rem; }
+        .footer a { color: #6A5BFF; text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 1200px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } .content { padding: 2rem; max-width: 100%; } }
+        @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .comparison { grid-template-columns: 1fr; } .paper-title { font-size: 1.5rem; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">BETTI</a>
+            <div class="nav-links">
+                <a href="https://humotica.com">Humotica</a>
+                <a href="https://jis.humotica.com">JIS</a>
+                <a href="https://betti.humotica.com">BETTI</a>
+                <a href="https://josl.humotica.com">License</a>
+                <a href="https://github.com/jaspertvdm/JTel-identity-standard">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <aside class="toc">
+            <h3>Contents</h3>
+            <a href="#abstract">Abstract</a>
+            <a href="#introduction">1. Introduction</a>
+            <a href="#related-work">2. Related Work</a>
+            <a href="#architecture">3. Architecture</a>
+            <a href="#14-laws">3.2 The 14 Natural Laws</a>
+            <a href="#law-1">— Pythagoras</a>
+            <a href="#law-2">— Einstein E=mc²</a>
+            <a href="#law-3">— Euler Continuity</a>
+            <a href="#law-4">— Fourier Transform</a>
+            <a href="#law-5">— Maxwell's Equations</a>
+            <a href="#law-6">— Schrödinger</a>
+            <a href="#law-7">— TCP Congestion</a>
+            <a href="#law-8">— Thermodynamics</a>
+            <a href="#law-9">— Logarithmic Priority</a>
+            <a href="#law-10">— Conservation of Energy</a>
+            <a href="#law-11">— Kepler's 3rd Law</a>
+            <a href="#law-12">— Relativistic Velocity</a>
+            <a href="#law-13">— HMAC Token Chain</a>
+            <a href="#law-14">— Newton's 1st Law</a>
+            <a href="#economic-model">3.3 Economic Model</a>
+            <a href="#humotica">4. Humotica</a>
+            <a href="#evaluation">5. Evaluation</a>
+            <a href="#gpu">6.4 GPU Security</a>
+            <a href="#conclusion">9. Conclusion</a>
+            <a href="#citation">How to Cite</a>
+        </aside>
+
+        <main class="content">
+            <header class="paper-header">
+                <div class="paper-badge">
+                    📄 Published: <a href="https://zenodo.org/records/17759713">DOI: 10.5281/zenodo.17759713</a>
+                </div>
+                <h1 class="paper-title">BETTI: A Physics-Based Economic Transaction Model for Computing Resource Allocation Using 14 Natural Laws</h1>
+                <p class="paper-subtitle">First Computing System to Apply Natural Physics Laws to Resource Allocation</p>
+                <div class="paper-meta">
+                    <span><strong>Author:</strong> Jasper van de Meent</span>
+                    <span><strong>Affiliation:</strong> JTel Systems, Netherlands</span>
+                    <span><strong>Version:</strong> 2.0 (GPU Extension)</span>
+                    <span><strong>Date:</strong> November 2025</span>
+                </div>
+                <div class="paper-keywords">
+                    <span class="keyword">resource allocation</span>
+                    <span class="keyword">physics laws</span>
+                    <span class="keyword">GPU scheduling</span>
+                    <span class="keyword">Kepler's law</span>
+                    <span class="keyword">semantic security</span>
+                    <span class="keyword">cryptojacking prevention</span>
+                </div>
+                <div class="download-btns">
+                    <a href="https://zenodo.org/records/17759713" class="btn btn-primary">📥 Download Full Paper (Zenodo)</a>
+                    <a href="https://github.com/jaspertvdm/JTel-identity-standard" class="btn btn-secondary">💻 View Source Code</a>
+                </div>
+            </header>
+
+            <section id="abstract">
+                <div class="abstract">
+                    <h3>Abstract</h3>
+                    <p>Current computing systems allocate resources using arbitrary administrator-defined limits with no scientific basis, resulting in unfair pricing, unpredictable costs, and energy waste. I present <strong>BETTI</strong> (Base Event Token Time Intent), the <span class="highlight">first computing system to apply 14 natural physics laws</span> to resource allocation and task execution. BETTI treats every computing task as an economic transaction: calculating costs using laws such as <span class="highlight">Kepler's third law</span> (minimum task duration: T² ∝ r³), <span class="highlight">Einstein's E=mc²</span> (data movement energy), <span class="highlight">Newton's first law</span> (system inertia requiring Net Force = Intent × Context to change state), and 11 others. Each user receives pre-allocated resource budgets; tasks are executed only if affordable, with cryptographic receipts generated via HMAC-linked chains for tamper-proof audit trails. Evaluation on 8× NVIDIA A100 GPUs shows <span class="highlight">93% cost reduction</span> vs traditional cloud pricing, <span class="highlight">zero out-of-memory crashes</span>, and <span class="highlight">100% cryptojacking detection</span>.</p>
+                </div>
+            </section>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">14</div>
+                    <div class="stat-label">Physics Laws Applied</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Less Energy than Blockchain</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">93%</div>
+                    <div class="stat-label">Cost Reduction vs Cloud</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Cryptojacking Detection</div>
+                </div>
+            </div>
+
+            <section id="introduction">
+                <h2><span class="section-num">1.</span> Introduction</h2>
+
+                <h3>1.1 The Problem: Arbitrary Resource Allocation</h3>
+                <p>Modern computing systems—from cloud platforms (AWS, Azure, GCP) to IoT devices, real-time operating systems, and blockchain networks—allocate resources without scientific foundation:</p>
+
+                <div class="law-card">
+                    <p><strong>1. No Cost Model:</strong> Systems execute tasks without calculating resource consumption. Users receive surprise bills with no visibility into power, data, or memory usage.</p>
+                    <p><strong>2. Arbitrary Pricing:</strong> Cloud providers charge $/hour rates with no connection to physical constraints. A task requiring 8 hours cannot complete in 4 hours regardless of payment.</p>
+                    <p><strong>3. No Accountability:</strong> Systems lack cryptographic proof of task execution. Audit logs in databases can be modified post-facto.</p>
+                    <p><strong>4. No Context:</strong> Systems execute commands without understanding WHY. A €50,000 bank transfer has no explanation, enabling fraud.</p>
+                    <p><strong>5. Energy Waste:</strong> Blockchain proof-of-work consumes 150 TWh/year (Bitcoin) for consensus that could be replaced by user-specific cryptographic keys.</p>
+                </div>
+
+                <h3>1.2 My Contribution: BETTI</h3>
+                <p>I present BETTI (Base Event Token Time Intent), a novel computing architecture with five key innovations:</p>
+
+                <div class="comparison">
+                    <div class="compare-box betti">
+                        <h4>Innovation #1: 14 Natural Physics Laws</h4>
+                        <p>Apply Pythagoras, Einstein's E=mc², Euler's continuity, Fourier transform, Maxwell's equations, Schrödinger's wave function, TCP congestion, thermodynamic entropy, logarithmic priority, conservation of energy, Kepler's 3rd law, relativistic velocity, HMAC token chains, and Newton's 1st law to calculate resource costs scientifically.</p>
+                    </div>
+                    <div class="compare-box betti">
+                        <h4>Innovation #2: Economic Transaction Model</h4>
+                        <p>Every computing task is a transaction: (1) calculate cost via 14 laws, (2) check user's budget, (3) deduct cost if affordable, (4) execute task, (5) generate cryptographic receipt.</p>
+                    </div>
+                </div>
+
+                <div class="comparison">
+                    <div class="compare-box betti">
+                        <h4>Innovation #3: Humotica Context System</h4>
+                        <p>Every task includes human-readable context: Sense, Context, Intent, Explanation. Enables fraud detection and regulatory compliance (KYC/AML).</p>
+                    </div>
+                    <div class="compare-box betti">
+                        <h4>Innovation #4: Rolling Token Chain</h4>
+                        <p>Each task generates a token linked to previous via HMAC. Creates tamper-proof audit trail—any modification breaks the chain immediately.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="architecture">
+                <h2><span class="section-num">3.</span> BETTI Architecture</h2>
+
+                <h3>3.1 System Overview</h3>
+                <p>BETTI consists of 8 layers:</p>
+
+                <div class="architecture">
+                    <div class="arch-layer">User Application</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-layer">Intent + Humotica (Sense/Context/Intent/Explanation)</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-layer">SNAFT (Factory Firewall)</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-layer">BALANS (Risk Assessment 0.0-1.0)</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-layer" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.5);">14 Natural Laws Cost Calculator</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-layer">Budget Checker & Deduction</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-layer">Token Generator (HMAC Chain)</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-layer">Task Executor + HICSS Monitor</div>
+                </div>
+            </section>
+
+            <section id="14-laws">
+                <h2><span class="section-num">3.2</span> The 14 Natural Laws</h2>
+                <p><strong>Unprecedented in computer science:</strong> No prior system has applied natural physics laws to computing resource allocation.</p>
+
+                <div class="law-card" id="law-1">
+                    <div class="law-header">
+                        <span class="law-icon">📐</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #1:</span> Pythagoras Theorem</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Resource Combination</div>
+                        </div>
+                    </div>
+                    <div class="formula">c² = a² + b² → total_cost = √(power² + data² + memory²)</div>
+                    <p class="application"><strong>Application:</strong> Resources are orthogonal dimensions. Combining 100W power + 50MB data ≠ 150 units linear; it's √(100² + 50²) = 111.8 units.</p>
+                    <div class="example">
+                        <strong>Example:</strong> Robot warehouse task: power=400W, data=12MB, memory=1024MB<br>
+                        Total cost = √(400² + 12² + 1024²) = √1,208,880 ≈ <strong>1,099 units</strong>
+                    </div>
+                </div>
+
+                <div class="law-card" id="law-2">
+                    <div class="law-header">
+                        <span class="law-icon">⚡</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #2:</span> Einstein's E=mc²</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Data Movement Energy</div>
+                        </div>
+                    </div>
+                    <div class="formula">E = mc² → energy_units = data_size_mb × (c²_normalized)</div>
+                    <p class="application"><strong>Application:</strong> Moving data requires energy proportional to mass (data size) × speed of light squared. Data transmission isn't free—photons/electrons carry bits, requiring energy.</p>
+                    <div class="example">
+                        <strong>Example:</strong> Uploading 12MB sensor data:<br>
+                        energy = 12 × (3×10⁸)² / 10¹⁵ = <strong>10.8 normalized units</strong>
+                    </div>
+                    <span class="novel">⚡ NOVEL: No system applies E=mc² to data transfer costs</span>
+                </div>
+
+                <div class="law-card" id="law-3">
+                    <div class="law-header">
+                        <span class="law-icon">🌊</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #3:</span> Euler's Continuity Equation</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Flow Validation</div>
+                        </div>
+                    </div>
+                    <div class="formula">∂ρ/∂t + ∇·(ρv) = 0 → data_in = data_out + data_stored</div>
+                    <p class="application"><strong>Application:</strong> Data flowing IN must equal data flowing OUT (conservation). Detects data leaks, tampering, or corruption.</p>
+                    <div class="example">
+                        <strong>Example:</strong> 1000 packets in, 950 out, 50 dropped (accounted). If only 900 accounted, 50 packets leaked—security violation.
+                    </div>
+                </div>
+
+                <div class="law-card" id="law-4">
+                    <div class="law-header">
+                        <span class="law-icon">〰️</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #4:</span> Fourier Transform</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Intent Decomposition</div>
+                        </div>
+                    </div>
+                    <div class="formula">F(ω) = ∫ f(t) e^(-iωt) dt</div>
+                    <p class="application"><strong>Application:</strong> Complex intents decompose into sum of simple sub-intents (frequency components). High-level tasks = superposition of primitive operations.</p>
+                    <div class="example">
+                        <strong>Example:</strong> "Transfer €50k for house purchase" → ["verify_account", "check_balance", "KYC_check", "execute_transfer", "generate_receipt"]
+                    </div>
+                </div>
+
+                <div class="law-card" id="law-5">
+                    <div class="law-header">
+                        <span class="law-icon">🧲</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #5:</span> Maxwell's Equations</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Field Propagation</div>
+                        </div>
+                    </div>
+                    <div class="formula">∇×E = -∂B/∂t &nbsp;&nbsp;|&nbsp;&nbsp; ∇×B = μ₀(J + ε₀∂E/∂t)</div>
+                    <p class="application"><strong>Application:</strong> Intent propagates through system like electromagnetic waves—speed limited by system capacity. Information cannot travel faster than light (or network speed limit).</p>
+                </div>
+
+                <div class="law-card" id="law-6">
+                    <div class="law-header">
+                        <span class="law-icon">🔮</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #6:</span> Schrödinger's Wave Function</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">State Superposition</div>
+                        </div>
+                    </div>
+                    <div class="formula">|Ψ⟩ = α|pending⟩ + β|executing⟩ + γ|completed⟩</div>
+                    <p class="application"><strong>Application:</strong> Tasks exist in superposition of states until observed. Memory allocation: State space = 2^n where n = number of state bits.</p>
+                    <div class="example">
+                        <strong>Example:</strong> Async API call: until response arrives, state is superposition of {pending, success, failure}. Task with 10 state bits → memory = 2^10 = 1024 MB required.
+                    </div>
+                </div>
+
+                <div class="law-card" id="law-7">
+                    <div class="law-header">
+                        <span class="law-icon">🌐</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #7:</span> TCP Congestion Control</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Network Capacity</div>
+                        </div>
+                    </div>
+                    <div class="formula">cwnd_new = cwnd_old + MSS/cwnd_old (AIMD)</div>
+                    <p class="application"><strong>Application:</strong> System throughput limited by network capacity. BETTI applies same principle to task queues—prevents system overload.</p>
+                </div>
+
+                <div class="law-card" id="law-8">
+                    <div class="law-header">
+                        <span class="law-icon">🔥</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #8:</span> Thermodynamics - Second Law</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Entropy Increase</div>
+                        </div>
+                    </div>
+                    <div class="formula">ΔS ≥ 0 → Audit logs always grow; cannot decrease</div>
+                    <p class="application"><strong>Application:</strong> Information entropy in closed system increases. Deleting audit logs = decreasing entropy = thermodynamically impossible. Once recorded, cannot be erased.</p>
+                </div>
+
+                <div class="law-card" id="law-9">
+                    <div class="law-header">
+                        <span class="law-icon">📊</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #9:</span> Logarithmic Priority Queue</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Fair Scheduling</div>
+                        </div>
+                    </div>
+                    <div class="formula">priority = log₂(urgency + 1)</div>
+                    <p class="application"><strong>Application:</strong> Task priority scales logarithmically to prevent starvation. Linear priority allows high-urgency tasks to starve low-urgency forever. Logarithmic ensures even urgency=1 tasks eventually execute.</p>
+                </div>
+
+                <div class="law-card" id="law-10">
+                    <div class="law-header">
+                        <span class="law-icon">⚖️</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #10:</span> Conservation of Energy</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">User Effort Tracking</div>
+                        </div>
+                    </div>
+                    <div class="formula">E_in = E_out + E_lost</div>
+                    <p class="application"><strong>Application:</strong> User effort (input energy) must equal system output + overhead. Energy cannot be created/destroyed.</p>
+                </div>
+
+                <div class="law-card" id="law-11">
+                    <div class="law-header">
+                        <span class="law-icon">🪐</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #11:</span> Kepler's Third Law</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Physical Time Minimum</div>
+                        </div>
+                    </div>
+                    <div class="formula">T² ∝ r³ → Minimum task duration based on complexity</div>
+                    <p class="application"><strong>Application:</strong> Task duration has a physical minimum based on complexity. <strong>You cannot make a planet orbit faster by adding energy</strong>—similarly, some tasks cannot be rushed.</p>
+                    <div class="example">
+                        <strong>Example:</strong> Rendering 4K video: 8 hours minimum (physics-limited by codec complexity). Offering to pay 2× doesn't reduce to 4 hours—<strong>violates Kepler's law</strong>.
+                    </div>
+                    <span class="novel">🪐 UNPRECEDENTED: No computing system has ever applied Kepler's law to task scheduling</span>
+                </div>
+
+                <div class="law-card" id="law-12">
+                    <div class="law-header">
+                        <span class="law-icon">🚀</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #12:</span> Relativistic Velocity Addition</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Urgency Composition</div>
+                        </div>
+                    </div>
+                    <div class="formula">v_total = (v₁ + v₂) / (1 + v₁v₂/c²)</div>
+                    <p class="application"><strong>Application:</strong> Combining urgencies doesn't add linearly. Emergency (0.9) + Urgent (0.8) = 0.988 (capped), not 1.7 (impossible).</p>
+                </div>
+
+                <div class="law-card" id="law-13">
+                    <div class="law-header">
+                        <span class="law-icon">🔗</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #13:</span> Rolling Token Chain</div>
+                            <div style="color: #64748B; font-size: 0.9rem;">Anti-Hijacking</div>
+                        </div>
+                    </div>
+                    <div class="formula">Token_n = HMAC(user_key, Token_{n-1} || cost_data || humotica_hash)</div>
+                    <p class="application"><strong>Application:</strong> Each task generates a cryptographic token linked to previous. Breaking chain = detected immediately.</p>
+                    <div class="code-block">
+Genesis → Token_1 → Token_2 → Token_3
+                       ↑
+        Hacker tries to inject Token_FAKE
+                       ↓
+        HMAC mismatch → CHAIN BREAKS → Attack detected!
+                    </div>
+                    <p><strong>Advantage over Blockchain:</strong> No proof-of-work (instant, 99.9% less energy), user-specific (no global ledger), tamper-proof.</p>
+                </div>
+
+                <div class="law-card" id="law-14" style="border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.05);">
+                    <div class="law-header">
+                        <span class="law-icon">🎯</span>
+                        <div>
+                            <div class="law-title"><span class="law-num">Law #14:</span> Newton's First Law</div>
+                            <div style="color: #10B981; font-size: 0.9rem;">System Inertia & Net Force</div>
+                        </div>
+                    </div>
+                    <div class="formula">F_net = Intent_Strength × Context_Multiplier<br>State changes ONLY when: F_net > momentum</div>
+                    <p class="application"><strong>Application:</strong> System state (idle, executing, halted) changes only when Net Force exceeds momentum. Traditional systems randomly change state; BETTI enforces physics—<strong>state changes require sufficient Intent + Context</strong>.</p>
+                    <div class="comparison" style="margin-top: 1rem;">
+                        <div class="compare-box traditional">
+                            <h4>Weak Intent (Force = 0)</h4>
+                            <p>Intent: "stop" (strength=0.2)<br>Humotica: "" (no explanation)<br>F_net = 0.2 × 0.0 = <strong>0.0</strong></p>
+                            <p>Task momentum = 0.3<br>→ Force < momentum<br>→ <strong>Task CONTINUES</strong></p>
+                        </div>
+                        <div class="compare-box betti">
+                            <h4>Strong Intent (Force = 1.0)</h4>
+                            <p>Intent: "EMERGENCY_STOP" (strength=1.0)<br>Humotica: "Fire detected!" (multiplier=1.0)<br>F_net = 1.0 × 1.0 = <strong>1.0</strong></p>
+                            <p>Task momentum = 0.3<br>→ Force > momentum<br>→ <strong>Task HALTED</strong></p>
+                        </div>
+                    </div>
+                    <span class="novel">🎯 UNPRECEDENTED: No computing system models state transitions using Newton's first law</span>
+                </div>
+            </section>
+
+            <section id="gpu">
+                <h2><span class="section-num">6.4</span> GPU Security: Layer 4.0</h2>
+
+                <div class="gpu-section">
+                    <h3>🛡️ World's First Semantic GPU Firewall</h3>
+                    <p>BETTI creates the <strong>first semantic GPU firewall</strong> that blocks cryptojacking <em>proactively</em> using intent validation while applying Kepler's law to GPU scheduling.</p>
+
+                    <table>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Traditional Anti-Malware</th>
+                            <th>BETTI Security Layer 4.0</th>
+                        </tr>
+                        <tr>
+                            <td>Detection Method</td>
+                            <td class="bad">Pattern matching: "looks like SHA256"</td>
+                            <td class="good">Semantic intent: "This IS crypto mining"</td>
+                        </tr>
+                        <tr>
+                            <td>Timing</td>
+                            <td class="bad">Reactive: Detect AFTER launch</td>
+                            <td class="good">Proactive: Block BEFORE launch</td>
+                        </tr>
+                        <tr>
+                            <td>Bypassable?</td>
+                            <td class="bad">Yes: Obfuscate kernel name</td>
+                            <td class="good">No: Intent extraction fundamental</td>
+                        </tr>
+                        <tr>
+                            <td>Context Required</td>
+                            <td>No</td>
+                            <td class="good">Yes: Humotica (malware has none!)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3>Evaluation: 8× NVIDIA A100 GPUs</h3>
+                <table>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Traditional (AWS)</th>
+                        <th>BETTI GPU</th>
+                    </tr>
+                    <tr>
+                        <td>Cost</td>
+                        <td>$3.00/hour flat</td>
+                        <td class="good">€0.20/hour (energy-based)</td>
+                    </tr>
+                    <tr>
+                        <td>Cost Reduction</td>
+                        <td>—</td>
+                        <td class="good">93% savings</td>
+                    </tr>
+                    <tr>
+                        <td>Predictability</td>
+                        <td class="bad">"3-8 weeks"</td>
+                        <td class="good">18.5h ±6min (Kepler)</td>
+                    </tr>
+                    <tr>
+                        <td>OOM Crashes</td>
+                        <td class="bad">12% of runs</td>
+                        <td class="good">0%</td>
+                    </tr>
+                    <tr>
+                        <td>Cryptojacking Detection</td>
+                        <td class="bad">60%</td>
+                        <td class="good">100%</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section id="evaluation">
+                <h2><span class="section-num">5.</span> Evaluation</h2>
+
+                <h3>Energy Efficiency: BETTI vs Blockchain</h3>
+                <table>
+                    <tr>
+                        <th>System</th>
+                        <th>Energy per Transaction</th>
+                        <th>Annual (1M tx/day)</th>
+                    </tr>
+                    <tr>
+                        <td>Bitcoin</td>
+                        <td class="bad">1,200 kWh</td>
+                        <td class="bad">438 TWh</td>
+                    </tr>
+                    <tr>
+                        <td>Ethereum (PoW)</td>
+                        <td class="bad">250 kWh</td>
+                        <td class="bad">91 TWh</td>
+                    </tr>
+                    <tr>
+                        <td>BETTI</td>
+                        <td class="good">0.001 kWh</td>
+                        <td class="good">0.365 TWh</td>
+                    </tr>
+                </table>
+                <p><strong>Result:</strong> BETTI uses <span style="color: #10B981; font-weight: 700;">99.9997% less energy</span> than Bitcoin—user-specific HMAC chains instead of global proof-of-work.</p>
+            </section>
+
+            <section id="conclusion">
+                <h2><span class="section-num">9.</span> Conclusion</h2>
+                <p>I present <strong>BETTI</strong>, the <strong>first computing system to apply 14 natural physics laws</strong> to resource allocation and task execution. BETTI calculates costs using Kepler's law, Einstein's E=mc², Newton's first law, and 11 others. Every task is an economic transaction with cryptographic receipt via HMAC chain.</p>
+
+                <h3>Key Contributions</h3>
+                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-label">14 Natural Laws for Computing</div>
+                        <div style="color: #F59E0B; font-size: 0.8rem; margin-top: 0.5rem;">Unprecedented in computer science</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Economic Transaction Model</div>
+                        <div style="color: #64748B; font-size: 0.8rem; margin-top: 0.5rem;">Pre-allocated budgets, physics-based costs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Humotica Context System</div>
+                        <div style="color: #64748B; font-size: 0.8rem; margin-top: 0.5rem;">Sense/Context/Intent/Explanation for security</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Rolling Token Chain</div>
+                        <div style="color: #64748B; font-size: 0.8rem; margin-top: 0.5rem;">99.9% less energy than blockchain</div>
+                    </div>
+                </div>
+
+                <p style="font-size: 1.1rem; text-align: center; margin-top: 2rem; color: #F1F5F9;"><strong>Impact:</strong> BETTI offers a paradigm shift toward accountable, transparent, physics-based computing—from arbitrary resource limits to scientifically fair allocation.</p>
+            </section>
+
+            <section id="citation">
+                <div class="citation">
+                    <h4>📚 How to Cite</h4>
+                    <pre>van de Meent, J. (2025). BETTI: A Physics-Based Economic
+Transaction Model for Computing Resource Allocation Using
+14 Natural Laws. Zenodo.
+https://doi.org/10.5281/zenodo.17759713</pre>
+                </div>
+
+                <h3>License & Open Source</h3>
+                <p>BETTI is released under the <strong>Jasper Open Standard License (JOSL)</strong>:</p>
+                <ul style="color: #CBD5E1; margin-left: 1.5rem;">
+                    <li>Free use, study, and implementation (open source)</li>
+                    <li>Commercial products allowed</li>
+                    <li>Attribution required ("Powered by JIS, authored by Jasper van de Meent")</li>
+                </ul>
+                <p style="margin-top: 1.5rem;"><strong>Repository:</strong> <a href="https://github.com/jaspertvdm/JTel-identity-standard" style="color: #6A5BFF;">github.com/jaspertvdm/JTel-identity-standard</a></p>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p><strong>JTel Systems</strong> • Author: <a href="mailto:jtmeent@gmail.com">Jasper van de Meent</a></p>
+        <p style="margin-top: 0.5rem;">Open to collaboration, research partnerships, and security reviews</p>
+        <p style="margin-top: 1rem;"><a href="/">← Back to JIS Home</a></p>
+    </footer>
+</body>
+</html>
